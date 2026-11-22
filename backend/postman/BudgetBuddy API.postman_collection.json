@@ -1,0 +1,156 @@
+{
+  "info": {
+    "name": "BudgetBuddy API",
+    "description": "Manual requests for the local BudgetBuddy backend. Register or log in, copy the returned token into authToken, then try the protected finance routes.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "authToken", "value": "" },
+    { "key": "expenseId", "value": "1" },
+    { "key": "incomeId", "value": "1" },
+    { "key": "budgetId", "value": "1" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register test account",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"fullName\": \"BudgetBuddy Student\",\n  \"email\": \"student@example.com\",\n  \"password\": \"change-this-password\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/api/auth/register",
+            "description": "Use an email address not already registered. Copy the returned token into the authToken collection variable."
+          }
+        },
+        {
+          "name": "Log in",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"student@example.com\",\n  \"password\": \"change-this-password\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/api/auth/login",
+            "description": "Copy the returned token into the authToken collection variable."
+          }
+        },
+        { "name": "Get signed-in account", "request": { "method": "GET", "url": "{{baseUrl}}/api/auth/me" } }
+      ]
+    },
+    {
+      "name": "Health",
+      "item": [
+        { "name": "Check backend status", "request": { "auth": { "type": "noauth" }, "method": "GET", "url": "{{baseUrl}}/api/health" } }
+      ]
+    },
+    {
+      "name": "Expenses",
+      "item": [
+        {
+          "name": "Suggest category from description",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"description\": \"Lunch at campus cafe\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/api/expenses/suggest-category",
+            "description": "Requires the collection authToken variable. Uses OpenAI to suggest a category; review it before saving."
+          }
+        },
+        { "name": "List expenses", "request": { "method": "GET", "url": "{{baseUrl}}/api/expenses" } },
+        { "name": "Get one expense", "request": { "method": "GET", "url": "{{baseUrl}}/api/expenses/{{expenseId}}" } },
+        {
+          "name": "Create test expense",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"description\": \"Postman test lunch\",\n  \"category\": \"Food & Dining\",\n  \"amount\": 120,\n  \"paymentMethod\": \"Cash\",\n  \"date\": \"2026-10-07\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/api/expenses",
+            "description": "Copy the id from the response into the expenseId collection variable before trying update or delete."
+          }
+        },
+        {
+          "name": "Update expense by ID",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"description\": \"Postman test lunch updated\",\n  \"category\": \"Food & Dining\",\n  \"amount\": 125,\n  \"paymentMethod\": \"Cash\",\n  \"date\": \"2026-10-07\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/api/expenses/{{expenseId}}"
+          }
+        },
+        { "name": "Delete expense by ID", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/expenses/{{expenseId}}", "description": "Deletes the selected expense. Set expenseId to a test record you created." } }
+      ]
+    },
+    {
+      "name": "Income",
+      "item": [
+        { "name": "List income", "request": { "method": "GET", "url": "{{baseUrl}}/api/income" } },
+        { "name": "Get one income entry", "request": { "method": "GET", "url": "{{baseUrl}}/api/income/{{incomeId}}" } },
+        {
+          "name": "Create test income",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"source\": \"Postman test scholarship\",\n  \"amount\": 1500,\n  \"date\": \"2026-10-07\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/api/income",
+            "description": "Copy the id from the response into the incomeId collection variable before trying update or delete."
+          }
+        },
+        {
+          "name": "Update income by ID",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"source\": \"Postman test scholarship updated\",\n  \"amount\": 1600,\n  \"date\": \"2026-10-07\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/api/income/{{incomeId}}"
+          }
+        },
+        { "name": "Delete income by ID", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/income/{{incomeId}}", "description": "Deletes the selected income entry. Set incomeId to a test record you created." } }
+      ]
+    },
+    {
+      "name": "Budgets",
+      "item": [
+        { "name": "List budgets", "request": { "method": "GET", "url": "{{baseUrl}}/api/budgets" } },
+        { "name": "Get one budget", "request": { "method": "GET", "url": "{{baseUrl}}/api/budgets/{{budgetId}}" } },
+        {
+          "name": "Create test budget",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"category\": \"Postman test category\",\n  \"limit\": 1000,\n  \"period\": \"monthly\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/api/budgets",
+            "description": "Copy the id from the response into the budgetId collection variable before trying update or delete."
+          }
+        },
+        {
+          "name": "Update budget by ID",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"category\": \"Postman test category\",\n  \"limit\": 1200,\n  \"period\": \"monthly\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/api/budgets/{{budgetId}}"
+          }
+        },
+        { "name": "Delete budget by ID", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/budgets/{{budgetId}}", "description": "Deletes the selected budget. Set budgetId to a test record you created." } }
+      ]
+    },
+    {
+      "name": "Monthly summary",
+      "item": [
+        { "name": "Get current month summary", "request": { "method": "GET", "url": "{{baseUrl}}/api/summary/monthly" } },
+        { "name": "Get weekly summary", "request": { "method": "GET", "url": "{{baseUrl}}/api/summary/period?period=weekly" } },
+        { "name": "Get monthly period summary", "request": { "method": "GET", "url": "{{baseUrl}}/api/summary/period?period=monthly" } },
+        { "name": "Get yearly summary", "request": { "method": "GET", "url": "{{baseUrl}}/api/summary/period?period=yearly" } }
+      ]
+    }
+  ]
+}
+
+
