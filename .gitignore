@@ -4,4 +4,4 @@ backend/target/
 .env
 .idea/
 .vscode/
-INTERVIEW_PREPARATION.md/
+backend/INTERVIEW_PREPARATION.md/
